@@ -1,168 +1,172 @@
 ---
-title: API Reference
+title: Airbitz Core Javascript API Reference
 
 language_tabs:
-  - shell
-  - ruby
-  - python
+  - Code
 
 toc_footers:
-  - <a href='#'>Sign Up for a Developer Key</a>
+  - <a href='https://developer.airbitz.co'>Sign Up for a Developer Key</a>
   - <a href='https://github.com/tripit/slate'>Documentation Powered by Slate</a>
-
-includes:
-  - errors
 
 search: true
 ---
 
 # Introduction
 
-Welcome to the Kittn API! You can use our API to access Kittn API endpoints, which can get information on various cats, kittens, and breeds in our database.
+Welcome to the Airbitz Core Javascript API!  The Airbitz Core Javascript
+library makes securing data easy for developers.  This library makes your
+user's data secure and 100% private so that only end-users can access it.
 
-We have language bindings in Shell, Ruby, and Python! You can view code examples in the dark area to the right, and you can switch the programming language of the examples with the tabs in the top right.
+This functionality is particularly well-suited for blockchain applications that
+need to secure and backup private keys, but it can also be used to augment
+existing applications, making them more private and more secure.
 
-This example API documentation page was created with [Slate](https://github.com/tripit/slate). Feel free to edit it and use it as a base for your own API's documentation.
+# Getting Started
+
+You'll need to build `abc.js` to include into your own application.
+
+`$ git clone https://github.com/airbitz/airbitz-core-js`
+
+`$ cd airbitz-core-js`
+
+`$ npm install`
+
+`$ npm run webpack`
+
+Now you can copy `abc.js` into your project.
 
 # Authentication
 
-> To authorize, use this code:
+The first step in using `abc.js` is to instantiate an `abc.Context` object.
+You'll need a developer API key in order to do so.  You can register for an API
+key at our [developer portal](https://developer.airbitz.co).
 
-```ruby
-require 'kittn'
+You'll be required to login with BitId, another technology that `abc.js` is
+able to easily support.
 
-api = Kittn::APIClient.authorize!('meowmeowmeow')
+> To authenticate, you need include your API key when instantiating a new `abc.Context`:
+
+```javascript
+var ctx = new abc.Context('YOUR_API_KEY');
 ```
 
-```python
-import kittn
+> Once you have the context object, you can begin securing your data.
 
-api = kittn.authorize('meowmeowmeow')
+# Accounts
+
+## Create Account
+
+```javascript
+ctx.accountCreate('username', 'password', function(err, result) {
+    if (err) {
+        alert("Registration Failed: " + err);
+    } else {
+        var account = result;
+    }
+});
 ```
 
-```shell
-# With shell, you can just pass the correct header with each request
-curl "api_endpoint_here"
-  -H "Authorization: meowmeowmeow"
-```
-
-> Make sure to replace `meowmeowmeow` with your API key.
-
-Kittn uses API keys to allow access to the API. You can register a new Kittn API key at our [developer portal](http://example.com/developers).
-
-Kittn expects for the API key to be included in all API requests to the server in a header that looks like the following:
-
-`Authorization: meowmeowmeow`
-
-<aside class="notice">
-You must replace <code>meowmeowmeow</code> with your personal API key.
-</aside>
-
-# Kittens
-
-## Get All Kittens
-
-```ruby
-require 'kittn'
-
-api = Kittn::APIClient.authorize!('meowmeowmeow')
-api.kittens.get
-```
-
-```python
-import kittn
-
-api = kittn.authorize('meowmeowmeow')
-api.kittens.get()
-```
-
-```shell
-curl "http://example.com/api/kittens"
-  -H "Authorization: meowmeowmeow"
-```
-
-> The above command returns JSON structured like this:
-
-```json
-[
-  {
-    "id": 1,
-    "name": "Fluffums",
-    "breed": "calico",
-    "fluffiness": 6,
-    "cuteness": 7
-  },
-  {
-    "id": 2,
-    "name": "Max",
-    "breed": "unknown",
-    "fluffiness": 5,
-    "cuteness": 10
-  }
-]
-```
-
-This endpoint retrieves all kittens.
-
-### HTTP Request
-
-`GET http://example.com/api/kittens`
-
-### Query Parameters
-
-Parameter | Default | Description
---------- | ------- | -----------
-include_cats | false | If set to true, the result will also include cats.
-available | true | If set to false, the result will include kittens that have already been adopted.
-
-<aside class="success">
-Remember — a happy kitten is an authenticated kitten!
-</aside>
-
-## Get a Specific Kitten
-
-```ruby
-require 'kittn'
-
-api = Kittn::APIClient.authorize!('meowmeowmeow')
-api.kittens.get(2)
-```
-
-```python
-import kittn
-
-api = kittn.authorize('meowmeowmeow')
-api.kittens.get(2)
-```
-
-```shell
-curl "http://example.com/api/kittens/2"
-  -H "Authorization: meowmeowmeow"
-```
-
-> The above command returns JSON structured like this:
+> If successful the above `accountCreate` function returns an `Account` object in the results field. It looks like this:
 
 ```json
 {
-  "id": 2,
-  "name": "Max",
-  "breed": "unknown",
-  "fluffiness": 5,
-  "cuteness": 10
+    "authId": "UbeR8lwlogYSAk2h2arplNzXXKoQbd10Y9IlwY+oDUc=",
+    "authKey": "...",
+    "ctx": Context,
+    "dataKey": "..."
+    "rootKey": "..."
+    "syncKey": "..."
+    "username": "airbitz-js-user"
 }
 ```
 
-This endpoint retrieves a specific kitten.
+## PIN setup
 
-<aside class="warning">Inside HTML code blocks like this one, you can't use Markdown, so use <code>&lt;code&gt;</code> blocks to denote code.</aside>
+If a PIN is setup for an account, a user can quickly login without needing to
+type in their entire password. In order to take advantage of this
+functionality, the user must already be logged in so `pinSetup` can be called
+on the `account` object.
 
-### HTTP Request
+```javascript
+account.pinSetup('pin', function(err, result) {
+    if (err) {
+        alert("Registration Failed: " + err);
+    } else {
+        alert("PIN setup");
+    }
+});
+```
 
-`GET http://example.com/kittens/<ID>`
+## Password Login
 
-### URL Parameters
+Password logins are the most typical way for a user to authenticate themselves.
+If a user is able to login, you'll be returned an `Account` object.
 
-Parameter | Description
---------- | -----------
-ID | The ID of the kitten to retrieve
+```javascript
+ctx.passwordLogin('username', 'password', function(err, result) {
+    if (err) {
+        alert("Registration Failed: " + err);
+    } else {
+        var account = result;
+    }
+});
+```
+
+> If successful, the response is the same as `accountCreate` function. An `Account` object is returned in the the results field.
+
+```json
+{
+    "authId": "UbeR8lwlogYSAk2h2arplNzXXKoQbd10Y9IlwY+oDUc=",
+    "authKey": "...",
+    "ctx": Context,
+    "dataKey": "..."
+    "rootKey": "..."
+    "syncKey": "..."
+    "username": "airbitz-js-user"
+}
+```
+
+## PIN Login
+
+```javascript
+ctx.pinLogin('username', 'pin', function(err, result) {
+    if (err) {
+        alert("Registration Failed: " + err);
+    } else {
+        var account = result;
+    }
+});
+```
+
+> If successful, the response is the same as `accountCreate` function. An `Account` object is returned in the the results field.
+
+```json
+{
+    "authId": "UbeR8lwlogYSAk2h2arplNzXXKoQbd10Y9IlwY+oDUc=",
+    "authKey": "...",
+    "ctx": Context,
+    "dataKey": "..."
+    "rootKey": "..."
+    "syncKey": "..."
+    "username": "airbitz-js-user"
+}
+```
+
+# Errors
+
+All errors in the API are Javascript error objects. The message will either be
+the error that occurred, or javascript object with a server response.
+
+```json
+{
+    "authId": "UbeR8lwlogYSAk2h2arplNzXXKoQbd10Y9IlwY+oDUc=",
+    "authKey": "...",
+    "ctx": Context,
+    "dataKey": "..."
+    "rootKey": "..."
+    "syncKey": "..."
+    "username": "airbitz-js-user"
+}
+```
+
 
