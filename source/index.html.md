@@ -14,7 +14,7 @@ search: true
 # Introduction
 
 Welcome to the Airbitz Core Javascript API!  The Airbitz Core Javascript
-library makes securing data easy for developers.  This library makes your
+API makes securing data easy for developers.  This library makes your
 user's data secure and 100% private so that only end-users can access it.
 
 This functionality is particularly well-suited for blockchain applications that
@@ -44,20 +44,81 @@ key at our [developer portal](https://developer.airbitz.co).
 You'll be required to login with BitId, another technology that `abc.js` is
 able to easily support.
 
-> To authenticate, you need include your API key when instantiating a new `abc.Context`:
+> Example code
 
 ```javascript
-var ctx = new abc.Context('YOUR_API_KEY');
+var context = new abc.Context('YOUR_API_KEY');
 ```
 
-> Once you have the context object, you can begin securing your data.
+# Classes
 
-# Accounts
+## Context Class
+
+The context class is required to interact with the Airbitz Core API. From this
+class you can create accounts, login and query the Airbitz servers.
+
+```javascript
+Context({
+    usernameAvailable: function() {},
+    accountCreate: function() {},
+    passwordLogin: function() {},
+    pinExists: function() {},
+    pinLogin: function() {}
+})
+```
+
+## Account Class
+
+The account object provides access to the secured data and provides various
+operations on the account for example [`logout`](#logout) and [`pinSetup`](#pin-setup).
+
+```javascript
+Account({
+    pinSetup: function() { },
+    logout: function() { },
+    dataKey: "...",
+    syncKey: "...",
+    rootKey: "..."
+})
+```
+
+# Functions and Methods
+
+## Username Available
+
+This method allows you to check if a particular username is available.
+
+Parameter | Description
+--------- | -----------
+username  | the new user's username
+callback  | callback with either an error code or an account object
+
+> Example code
+
+```javascript
+context.accountCreate('username', 'password', function(err, result) {
+    if (err) {
+        console.log(err);
+    } else {
+        console.log(result);
+    }
+});
+```
 
 ## Create Account
 
+This method allows you to create new accounts for the user.
+
+Parameter | Description
+--------- | -----------
+username  | the new user's username
+password  | the new user's password
+callback  | callback with either an error code or an account object
+
+> Example code
+
 ```javascript
-ctx.accountCreate('username', 'password', function(err, result) {
+context.accountCreate('username', 'password', function(err, result) {
     if (err) {
         alert("Registration Failed: " + err);
     } else {
@@ -66,14 +127,44 @@ ctx.accountCreate('username', 'password', function(err, result) {
 });
 ```
 
-> If successful, the result is an `Account` object. 
 
-## PIN setup
+## Password Login
+
+Password logins are the most typical way for a user to authenticate themselves.
+If a user successfully logs in, you'll be returned an `Account` object. At the
+moment, the account contains the `pinSetup` method and holds keys and private
+data for the account.
+
+Parameter | Description
+--------- | -----------
+username  | the new user's username
+password  | the new user's password
+callback  | callback with either an error code or an account object
+
+> Example code
+
+```javascript
+context.passwordLogin('username', 'password', function(err, result) {
+    if (err) {
+        alert("Registration Failed: " + err);
+    } else {
+        var account = result;
+    }
+});
+```
+
+## PIN Setup
 
 If a PIN is setup for an account, a user can quickly login without needing to
 type in their entire password. In order to take advantage of this
 functionality, the user must already be logged in so `pinSetup` can be called
 on the `account` object.
+
+Parameter | Description
+--------- | -----------
+pin | the pin to login with on the current device
+
+> Example code
 
 ```javascript
 account.pinSetup('pin', function(err, result) {
@@ -85,27 +176,20 @@ account.pinSetup('pin', function(err, result) {
 });
 ```
 
-## Password Login
-
-Password logins are the most typical way for a user to authenticate themselves.
-If a user is able to login, you'll be returned an `Account` object.
-
-```javascript
-ctx.passwordLogin('username', 'password', function(err, result) {
-    if (err) {
-        alert("Registration Failed: " + err);
-    } else {
-        var account = result;
-    }
-});
-```
-
-> If successful, the result is an `Account` object. 
-
 ## PIN Login
 
+PIN login can only be used on an account that has previously logged in with
+`passwordLogin` and that has `pinSetup` called as well.
+
+Parameter | Description
+--------- | -----------
+pin       | the login pin specified in `pinSetup`
+callback  | callback with either an error code or an account object
+
+> Example code
+
 ```javascript
-ctx.pinLogin('username', 'pin', function(err, result) {
+context.pinLogin('username', 'pin', function(err, result) {
     if (err) {
         alert("Registration Failed: " + err);
     } else {
@@ -114,7 +198,19 @@ ctx.pinLogin('username', 'pin', function(err, result) {
 });
 ```
 
-> If successful, the result is an `Account` object. 
+## Logout
+
+Logout clears the account object, nulling out the keys. Since there is no
+"session" in the typical sense, if the keys in the account are null, the user
+is effectively logged out. In order to regain access to the keys again, the
+user will have to login again.
+
+> Example code
+
+```javascript
+// Not much to see here, just log out
+account.logout();
+```
 
 # Errors
 
