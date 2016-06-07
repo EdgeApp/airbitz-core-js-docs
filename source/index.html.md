@@ -66,19 +66,7 @@ ctx.accountCreate('username', 'password', function(err, result) {
 });
 ```
 
-> If successful the above `accountCreate` function returns an `Account` object in the results field. It looks like this:
-
-```json
-{
-    "authId": "UbeR8lwlogYSAk2h2arplNzXXKoQbd10Y9IlwY+oDUc=",
-    "authKey": "...",
-    "ctx": Context,
-    "dataKey": "..."
-    "rootKey": "..."
-    "syncKey": "..."
-    "username": "airbitz-js-user"
-}
-```
+> If successful, the result is an `Account` object. 
 
 ## PIN setup
 
@@ -112,19 +100,7 @@ ctx.passwordLogin('username', 'password', function(err, result) {
 });
 ```
 
-> If successful, the response is the same as `accountCreate` function. An `Account` object is returned in the the results field.
-
-```json
-{
-    "authId": "UbeR8lwlogYSAk2h2arplNzXXKoQbd10Y9IlwY+oDUc=",
-    "authKey": "...",
-    "ctx": Context,
-    "dataKey": "..."
-    "rootKey": "..."
-    "syncKey": "..."
-    "username": "airbitz-js-user"
-}
-```
+> If successful, the result is an `Account` object. 
 
 ## PIN Login
 
@@ -138,35 +114,10 @@ ctx.pinLogin('username', 'pin', function(err, result) {
 });
 ```
 
-> If successful, the response is the same as `accountCreate` function. An `Account` object is returned in the the results field.
-
-```json
-{
-    "authId": "UbeR8lwlogYSAk2h2arplNzXXKoQbd10Y9IlwY+oDUc=",
-    "authKey": "...",
-    "ctx": Context,
-    "dataKey": "..."
-    "rootKey": "..."
-    "syncKey": "..."
-    "username": "airbitz-js-user"
-}
-```
+> If successful, the result is an `Account` object. 
 
 # Errors
 
 All errors in the API are Javascript error objects. The message will either be
 the error that occurred, or javascript object with a server response.
-
-```json
-{
-    "authId": "UbeR8lwlogYSAk2h2arplNzXXKoQbd10Y9IlwY+oDUc=",
-    "authKey": "...",
-    "ctx": Context,
-    "dataKey": "..."
-    "rootKey": "..."
-    "syncKey": "..."
-    "username": "airbitz-js-user"
-}
-```
-
 
